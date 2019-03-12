@@ -5,16 +5,28 @@ PImage label;
 PShape can;
 float angle;
 int startTime;
+int mask; // 0, 1, 2: BW, edge, emboss
 
 PShader shaderMask;
 
 void setup() {
+  startTime = millis();
+  mask = 0;
   size(1000, 1000, P3D);
   label = loadImage("tex3.jpg");
   can = createCan(716, 2500, 4500, label);
-  shaderMask = loadShader("embossfrag.glsl");
-  //shaderMask = loadShader("edgesfrag.glsl");
-  //shaderMask = loadShader("bwfrag.glsl"); 
+  switch (mask) {
+    case 0:
+      shaderMask = loadShader("bwfrag.glsl");
+    break;
+    case 1:
+      shaderMask = loadShader("edgesfrag.glsl");
+    break;
+    case 2:
+      shaderMask = loadShader("embossfrag.glsl");
+    break;
+  }
+  println(millis() - startTime);
 }
 
 void draw() {
@@ -25,11 +37,10 @@ void draw() {
   rotateY(angle);  
   shape(can);  
   angle += 0.01;
-  //saveFrame("out.png");
+  saveFrame("out"+ mask +".png");
 }
 
 PShape createCan(float r, float h, int detail, PImage tex) {
-  startTime = millis();
   textureMode(NORMAL);
   PShape sh = createShape();
   sh.beginShape(QUAD_STRIP);
@@ -45,6 +56,5 @@ PShape createCan(float r, float h, int detail, PImage tex) {
     sh.vertex(x * r, +h/2, z * r, u, 1);    
   }
   sh.endShape();
-  println(millis() - startTime);
   return sh;
 }

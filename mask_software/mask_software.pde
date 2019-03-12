@@ -6,29 +6,62 @@ PImage newLabel;
 PShape can;
 float angle;
 int startTime;
+int mask; // 0, 1, 2: BW, edge, emboss
 
 PShader shaderMask;
 
 void setup() {
+  startTime = millis();
+  mask = 0;
   size(1000, 1000, P3D);
   label = loadImage("tex3.jpg");
   newLabel = createImage(label.width, label.height, RGB);
-  //filterImageBW();
-  can = createCan(716, 2500, 4500, label);
-  //shaderMask = loadShader("embossfrag.glsl");
-  //shaderMask = loadShader("edgesfrag.glsl");
-  shaderMask = loadShader("bwfrag.glsl"); 
+  switch (mask) {
+    case 0:
+      filterImageBW();
+    break;
+    case 1:
+      filterImageEdges();
+    break;
+    case 2:
+      //filterImageEmboss();
+    break;
+  }
+  can = createCan(716, 2500, 4500, newLabel);
+  println(millis() - startTime);
 }
 
 void draw() {
   scale(0.4);
   background(0);
-  //shader(shaderMask);
   translate(width*1.2, height*1.2);
-  //rotateY(angle);  
+  rotateY(angle);  
   shape(can);  
   angle += 0.01;
-  //saveFrame("out.png");
+  saveFrame("out"+ mask +".png");
+}
+
+void filterImageEdges() {
+  float threshold = 127;
+
+  // We are going to look at both image's pixels
+  label.loadPixels();
+  newLabel.loadPixels();
+  
+  for (int x = 0; x < label.width; x++) {
+    for (int y = 0; y < label.height; y++ ) {
+      int loc = x + y*label.width;
+      // Test the brightness against the threshold
+      if (brightness(label.pixels[loc]) > threshold) {
+        newLabel.pixels[loc]  = color(255);  // White
+      }  else {
+        newLabel.pixels[loc]  = color(0);    // Black
+      }
+    }
+  }
+
+  // We changed the pixels in destination
+  newLabel.updatePixels();
 }
 
 void filterImageBW() {
@@ -55,7 +88,6 @@ void filterImageBW() {
 }
 
 PShape createCan(float r, float h, int detail, PImage tex) {
-  startTime = millis();
   textureMode(NORMAL);
   PShape sh = createShape();
   sh.beginShape(QUAD_STRIP);
@@ -71,6 +103,5 @@ PShape createCan(float r, float h, int detail, PImage tex) {
     sh.vertex(x * r, +h/2, z * r, u, 1);    
   }
   sh.endShape();
-  println(millis() - startTime);
   return sh;
 }
