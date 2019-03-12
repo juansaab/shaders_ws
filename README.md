@@ -23,7 +23,32 @@ Complete la tabla:
 
 ## Informe
 
-(elabore en este sección un informe del ejercicio realizado)
+Se realizó una comparación entre tres diferentes máscaras aplicadas a imágenes utilizando dos métodos: aplicación por software y aplicación en un Shader. Todo el código de la aplicación se desarrolló en Procesing, haciendo uso de el objeto Image y la posibilidad de acceder directamente a cada pixel con la función Image.loadPixels() de Processing.
+
+Los filtros aplicados fueron:
+
+* Blanco y negro
+* Detección de bordes
+* Realce
+
+Luego se evaluó el desempeño de cada filtro, y se compararon ambos métodos.
+
+Resultados:
+A continuación se presentan algunos resultados de tiempo de renderizado para cada método y filtro.
+
+### B&W
+![](graph1.png)
+
+### Edge
+![](graph2.png)
+
+### Embossing
+![](graph3.png)
+
+Se observa a simple vista que el desempeño del filtro en shader es entre dos y tres veces mejor que el del filtro por software.
+
+### Ejecucion
+![](shader.gif)
 
 ## Entrega
 
